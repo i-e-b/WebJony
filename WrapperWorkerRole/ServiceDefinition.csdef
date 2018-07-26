@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="WrapperWorkerRole" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2015-04.2.6">
+  <WorkerRole name="WrapperRoleListener" vmsize="Standard_D1_v2">
+    <Runtime executionContext="elevated" />
+    <Endpoints>
+      <!-- always has to be a high internal port, even if external port is low -->
+      <InputEndpoint name="HttpHigh" protocol="http" port="8080" localPort="8080" />
+      <InputEndpoint name="HttpLow" protocol="http" port="80" localPort="8081" />
+      <InputEndpoint name="Https" protocol="https" port="443" localPort="8082" certificate="iebwraptest.cloudapp.net.pfx.cer" />
+    </Endpoints>
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
+      <!-- This is your preferred external address -->
+      <Setting name="PrimaryCallbackAddress" />
+      <!-- If set to true and a https protocol is bound, this will force all HTTP calls to HTTPS -->
+      <Setting name="UpgradeHttp" />
+    </ConfigurationSettings>
+    <Certificates>
+      <!-- see https://zerossl.com/free-ssl -->
+      <Certificate name="iebwraptest.cloudapp.net.pfx.cer" storeLocation="LocalMachine" storeName="My" />
+      <Certificate name="localhost" storeLocation="LocalMachine" storeName="My" />
+    </Certificates>
+    <LocalResources>
+    </LocalResources>
+  </WorkerRole>
+</ServiceDefinition>

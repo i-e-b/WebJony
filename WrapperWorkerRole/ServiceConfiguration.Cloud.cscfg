@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ServiceConfiguration serviceName="WrapperWorkerRole" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="5" osVersion="*" schemaVersion="2015-04.2.6">
+  <Role name="WrapperRoleListener">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=iebcloudlistentest;AccountKey=$(_iebcloudlistentest.key_)" />
+      <Setting name="PrimaryCallbackAddress" value="http://iebwraptest.cloudapp.net" />
+      <Setting name="UpgradeHttp" value="true" />
+    </ConfigurationSettings>
+    <Certificates>
+      <Certificate name="iebwraptest.cloudapp.net.pfx.cer" thumbprint="E30F4E1B92A98355A148DBDD564A357071CD633A" thumbprintAlgorithm="sha1" />
+      <Certificate name="localhost" thumbprint="574EC6ECEB118DD259BD73CDECAE904E160DD950" thumbprintAlgorithm="sha1" />
+    </Certificates>
+  </Role>
+</ServiceConfiguration>

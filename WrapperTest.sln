@@ -1,0 +1,87 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleHostedApi", "SampleHostedApi\SampleHostedApi.csproj", "{E641BE90-C4B4-40FA-89AE-66AC7E111434}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrapperMarkerAttributes", "WrapperMarkerAttributes\WrapperMarkerAttributes.csproj", "{DFBF42B0-A304-4AEC-B468-0A8458C1139C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtEndpointCaller", "JwtEndpointCaller\JwtEndpointCaller.csproj", "{C5D5B457-FAB4-49A4-9D60-98B358FD75D6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Info", "_Info", "{9C29D75C-AB6D-4A99-9E58-73B1E6260E6D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		example_security.json = example_security.json
+		Readme.txt = Readme.txt
+		security.json = security.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FDCAF9C4-F89B-4FBB-A596-CDC0E30B8391}"
+	ProjectSection(SolutionItems) = preProject
+		Readme.txt = Readme.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrapperCommon", "WrapperCommon\WrapperCommon.csproj", "{1272ABD2-94B0-44AB-B363-AEAA39E9482F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{4CF02D4D-D54B-4A93-9D1F-E3BD14F71BF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VersionUploader", "VersionUploader\VersionUploader.csproj", "{7631FD3B-B5F7-4E74-B39A-257FCC8CF243}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WorkerRoleTests", "WorkerRoleTests", "{3906EC84-EE1D-425E-9B33-7EF3BEA3299D}"
+EndProject
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "WrapperWorkerRole", "WrapperWorkerRole\WrapperWorkerRole.ccproj", "{ED7014E8-C48C-4BF7-B178-7C5930F5E72B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrapperRoleListener", "WrapperRoleListener\WrapperRoleListener.csproj", "{7A3E6EF0-8C4E-4323-8D73-7D8CBDD145BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E641BE90-C4B4-40FA-89AE-66AC7E111434}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E641BE90-C4B4-40FA-89AE-66AC7E111434}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E641BE90-C4B4-40FA-89AE-66AC7E111434}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E641BE90-C4B4-40FA-89AE-66AC7E111434}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFBF42B0-A304-4AEC-B468-0A8458C1139C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFBF42B0-A304-4AEC-B468-0A8458C1139C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFBF42B0-A304-4AEC-B468-0A8458C1139C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFBF42B0-A304-4AEC-B468-0A8458C1139C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5D5B457-FAB4-49A4-9D60-98B358FD75D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5D5B457-FAB4-49A4-9D60-98B358FD75D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5D5B457-FAB4-49A4-9D60-98B358FD75D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5D5B457-FAB4-49A4-9D60-98B358FD75D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1272ABD2-94B0-44AB-B363-AEAA39E9482F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1272ABD2-94B0-44AB-B363-AEAA39E9482F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1272ABD2-94B0-44AB-B363-AEAA39E9482F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1272ABD2-94B0-44AB-B363-AEAA39E9482F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7631FD3B-B5F7-4E74-B39A-257FCC8CF243}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7631FD3B-B5F7-4E74-B39A-257FCC8CF243}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7631FD3B-B5F7-4E74-B39A-257FCC8CF243}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7631FD3B-B5F7-4E74-B39A-257FCC8CF243}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED7014E8-C48C-4BF7-B178-7C5930F5E72B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED7014E8-C48C-4BF7-B178-7C5930F5E72B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED7014E8-C48C-4BF7-B178-7C5930F5E72B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED7014E8-C48C-4BF7-B178-7C5930F5E72B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A3E6EF0-8C4E-4323-8D73-7D8CBDD145BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A3E6EF0-8C4E-4323-8D73-7D8CBDD145BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A3E6EF0-8C4E-4323-8D73-7D8CBDD145BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A3E6EF0-8C4E-4323-8D73-7D8CBDD145BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E641BE90-C4B4-40FA-89AE-66AC7E111434} = {FDCAF9C4-F89B-4FBB-A596-CDC0E30B8391}
+		{DFBF42B0-A304-4AEC-B468-0A8458C1139C} = {FDCAF9C4-F89B-4FBB-A596-CDC0E30B8391}
+		{C5D5B457-FAB4-49A4-9D60-98B358FD75D6} = {4CF02D4D-D54B-4A93-9D1F-E3BD14F71BF6}
+		{1272ABD2-94B0-44AB-B363-AEAA39E9482F} = {FDCAF9C4-F89B-4FBB-A596-CDC0E30B8391}
+		{7631FD3B-B5F7-4E74-B39A-257FCC8CF243} = {4CF02D4D-D54B-4A93-9D1F-E3BD14F71BF6}
+		{ED7014E8-C48C-4BF7-B178-7C5930F5E72B} = {3906EC84-EE1D-425E-9B33-7EF3BEA3299D}
+		{7A3E6EF0-8C4E-4323-8D73-7D8CBDD145BF} = {3906EC84-EE1D-425E-9B33-7EF3BEA3299D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0DD29162-574E-4C86-8DA3-1F1E3EEACA90}
+	EndGlobalSection
+EndGlobal

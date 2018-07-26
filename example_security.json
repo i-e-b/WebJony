@@ -1,0 +1,19 @@
+{
+    //Notes: This is an example file. The settings will *not* work out-of-the-box.
+    //       You must have an Azure tenancy with your own AAD account and users
+
+    // Security tennant key. Must be the same across the AAD organisation.
+    "TennantKey": "abcdef01-1234-0000-0000-000000000000",
+
+    // These are required to *create* a security token
+    // You can skip these if you aren't making secure call-outs
+    "AadAuthorityRoot": "https://login.microsoftonline.com/",
+    "ClientId": "11111111-2222-0000-0000-000000000000",
+    "AppKey": "eW91IG5lZWQgdG8gZ2V0IHlvdXIgb3duIGtleQ==",
+    "ResourceId": "33333333-2222-1111-0000-000000000000",
+
+    // These are required to *authenticate* a security token
+    "Audience": "33333333-2222-1111-0000-000000000000", // in practise, it's the same as the resourceID used to create the token
+    "KeyDiscoveryUrl": "https://login.microsoftonline.com/common/discovery/keys", // X5C AAD signing key source
+    "AadTokenIssuer": "https://sts.windows.net/" // URL Used to authenticate a security token
+}
