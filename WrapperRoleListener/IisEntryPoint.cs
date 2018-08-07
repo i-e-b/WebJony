@@ -1,41 +1,42 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
-using Communicator.Internal;
 using Huygens;
-using static Communicator.Internal.Delegates;
 using Tag;
+using WrapperRoleListener.Internal;
 
-namespace Communicator
+namespace WrapperRoleListener
 {
     /// <summary>
-    /// Shows the use of C# to drive a C++ shim.
+    /// Binds an ISAPI handler for the C++ IIS shim,
+    /// passing requests to a WrapperRequestHandler instance
+    ///
     /// The C++ side assumes:
-    ///     - The C# dll will be in the same directory, called `Communicator.dll`
-    ///     - There is a type `Communicator.Entry`
+    ///     - The C# dll/exe will be in the same directory
+    ///     - There is a type `WrapperRoleListener.IisEntryPoint`
     ///     - That type has a public static method `int FindFunctionPointer(string requestType)`
     /// </summary>
     [SuppressUnmanagedCodeSecurity]
     [PermissionSet(SecurityAction.Demand, Unrestricted = true)]
     [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
     [SecurityCritical]
-    public class Entry
+    public class IisEntryPoint
     {
         static GCHandle GcShutdownDelegateHandle;
-        static readonly VoidDelegate ShutdownPtr;
+        static readonly Delegates.VoidDelegate ShutdownPtr;
         static GCHandle GcHandleRequestDelegateHandle;
-        static readonly HandleHttpRequestDelegate HandlePtr;
+        static readonly Delegates.HandleHttpRequestDelegate HandlePtr;
 
         private static DirectServer _proxy;
 
         /// <summary>
         /// Static constructor. Build the function pointers
         /// </summary>
-        static Entry()
+        static IisEntryPoint()
         {
             ShutdownPtr = ShutdownCallback; // get permanent function pointer
             GcShutdownDelegateHandle = GCHandle.Alloc(ShutdownPtr); // prevent garbage collection
@@ -76,10 +77,7 @@ namespace Communicator
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            //var appDomain = sender as AppDomain;
-            var ex = e.ExceptionObject as Exception;
-
-            if (ex != null) RecPrintException(ex);
+            if (e.ExceptionObject is Exception ex) RecPrintException(ex);
             else File.AppendAllText(@"C:\Temp\RootException.txt", "\r\n\r\nNo exception");
         }
 
@@ -97,9 +95,8 @@ namespace Communicator
                 var bSetOk = Win32.SetSharedMem(Marshal.GetFunctionPointerForDelegate(del).ToInt64());
                 return bSetOk ? 1 : 0;
             }
-            catch //(Exception ex)
+            catch
             {
-                //File.AppendAllText(@"C:\Temp\InnerError.txt", "\r\nError when sending delegate: " + ex);
                 return -2;
             }
         }
@@ -130,7 +127,7 @@ namespace Communicator
             Int32 bytesAvailable, // if available < declared, you need to run `readClient` to get more
             IntPtr data, // first blush of data, if any
 
-            GetServerVariableDelegate getServerVariable, WriteClientDelegate writeClient, ReadClientDelegate readClient, IntPtr serverSupport)
+            Delegates.GetServerVariableDelegate getServerVariable, Delegates.WriteClientDelegate writeClient, Delegates.ReadClientDelegate readClient, IntPtr serverSupport)
         #endregion
         {
             try
@@ -221,7 +218,7 @@ namespace Communicator
         }
         
         [SuppressUnmanagedCodeSecurity]
-        private static byte[] ReadAllContent(IntPtr connId, int bytesAvailable, int bytesDeclared, IntPtr data, ReadClientDelegate readClient)
+        private static byte[] ReadAllContent(IntPtr connId, int bytesAvailable, int bytesDeclared, IntPtr data, Delegates.ReadClientDelegate readClient)
         {
             if (bytesDeclared < 1) return null;
             
@@ -261,7 +258,7 @@ namespace Communicator
         /// Read headers from the incoming request
         /// </summary>
         [SuppressUnmanagedCodeSecurity]
-        private static string TryGetHeaders(IntPtr conn, GetServerVariableDelegate callback)
+        private static string TryGetHeaders(IntPtr conn, Delegates.GetServerVariableDelegate callback)
         {
             var size = 4096;
             var buffer = Marshal.AllocHGlobal(size);
@@ -274,7 +271,7 @@ namespace Communicator
         }
         
         [SuppressUnmanagedCodeSecurity]
-        private static string TryGetPhysPath(IntPtr conn, GetServerVariableDelegate callback)
+        private static string TryGetPhysPath(IntPtr conn, Delegates.GetServerVariableDelegate callback)
         {
             var size = 4096;
             var buffer = Marshal.AllocHGlobal(size);
@@ -292,7 +289,7 @@ namespace Communicator
         [SuppressUnmanagedCodeSecurity]
         private static void TryWriteHeaders(IntPtr conn, IntPtr ss)
         {
-            var headerCall = Marshal.GetDelegateForFunctionPointer<ServerSupportFunctionDelegate_Headers>(ss);
+            var headerCall = Marshal.GetDelegateForFunctionPointer<Delegates.ServerSupportFunctionDelegate_Headers>(ss);
 
             var data = new SendHeaderExInfo
             {

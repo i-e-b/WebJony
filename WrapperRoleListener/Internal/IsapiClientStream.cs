@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Communicator.Internal
+namespace WrapperRoleListener.Internal
 {
     /// <summary>
     /// A stream interface to the ISAPI client data protocol.

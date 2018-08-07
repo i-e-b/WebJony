@@ -89,7 +89,7 @@ namespace JwtEndpointCaller
             Heading("Success?");
             Console.WriteLine("Press [enter] to repeat the last request in multiple threads");
             Console.WriteLine("This will test overall load and response times");
-            const int times = 2000;
+            const int times = 8000;
             const int threads = 30;
             Console.WriteLine("(set to call " + times + " times with " + threads + " threads)");
             UserWait();

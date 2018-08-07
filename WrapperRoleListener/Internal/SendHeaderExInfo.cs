@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Communicator.Internal
+namespace WrapperRoleListener.Internal
 {
     /// <summary>
     /// Structure for sending headers and status to IIS/ISAPI

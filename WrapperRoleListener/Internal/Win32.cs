@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Communicator.Internal
+namespace WrapperRoleListener.Internal
 {
     /// <summary>
     /// Interop calls
