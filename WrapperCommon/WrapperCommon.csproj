@@ -34,7 +34,7 @@
       <HintPath>..\packages\GeneralContainers.1.3.0\lib\netstandard1.0\Containers.dll</HintPath>
     </Reference>
     <Reference Include="Huygens, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Huygens.1.4.0\lib\net46\Huygens.dll</HintPath>
+      <HintPath>..\packages\Huygens.1.4.5\lib\net46\Huygens.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil, Version=0.10.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.10.0\lib\net40\Mono.Cecil.dll</HintPath>

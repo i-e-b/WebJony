@@ -63,9 +63,9 @@ namespace WrapperRoleListener.UiComponents
             var major = requestedVersion.Split('-').FirstOrDefault() ?? "0";
 
             // get a host setting to inject in the swagger
-            var redirUri = new Uri(CoreListener.ExternalEndpoint, UriKind.Absolute);
-            var selfAuthority = new Uri(CoreListener.ExternalEndpoint, UriKind.Absolute).Authority;
-            if (CoreListener.UpgradeHttp && redirUri.Scheme == "http")
+            var redirUri = new Uri(WrapperRequestHandler.ExternalEndpoint, UriKind.Absolute);
+            var selfAuthority = new Uri(WrapperRequestHandler.ExternalEndpoint, UriKind.Absolute).Authority;
+            if (WrapperRequestHandler.UpgradeHttp && redirUri.Scheme == "http")
             {
                 selfAuthority = redirUri.Host; // configured address would get bounced, to try guess a better uri
             }
@@ -87,9 +87,9 @@ namespace WrapperRoleListener.UiComponents
                     spec.host = selfAuthority;
                     spec.info.version = requestedVersion;
 
-                    if      (CoreListener.UpgradeHttp)    { spec.schemes = new[] {         "https" }; }
-                    else if (CoreListener.HttpsAvailable) { spec.schemes = new[] { "http", "https" }; }
-                    else                                  { spec.schemes = new[] { "http"          }; }
+                    if      (WrapperRequestHandler.UpgradeHttp)    { spec.schemes = new[] {         "https" }; }
+                    else if (WrapperRequestHandler.HttpsAvailable) { spec.schemes = new[] { "http", "https" }; }
+                    else                                           { spec.schemes = new[] { "http"          }; }
 
                     spec.securityDefinitions = new Dictionary<string, object>{
                         { "Bearer Token", new { type="apiKey", name = "Authorization", @in = "header" } }

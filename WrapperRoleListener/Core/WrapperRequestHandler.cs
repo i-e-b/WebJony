@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -6,6 +7,7 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using Huygens.Compatibility;
+using Microsoft.WindowsAzure.ServiceRuntime;
 using WrapperCommon;
 using WrapperCommon.AssemblyLoading;
 using WrapperCommon.Security;
@@ -30,20 +32,69 @@ namespace WrapperRoleListener.Core
         private Exception _lastScanError;
 
         public PluginScanner AvailableAppScanner { get; set; }
+        
+
+        /// <summary>
+        /// Configuration directly loaded by a host
+        /// </summary>
+        public static Configuration ExplicitConfiguration { get; set; }
+
+        /// <summary>
+        /// Bound external endpoint.
+        /// <para/>
+        /// Do not use request URIs externally, as they are internal bindings. Use one of these instead.
+        /// </summary>
+        public static string ExternalEndpoint { get; set; }
+
+        /// <summary>
+        /// Returns true if at least one HTTPS endpoint is available
+        /// </summary>
+        public static bool HttpsAvailable { get; set; }
+
+        /// <summary>
+        /// Returns true if HTTP calls should be redirected to HTTPS
+        /// </summary>
+        public static bool UpgradeHttp { get; set; }
+
+        /// <summary>
+        /// Get a setting if defined in the role config or the app config
+        /// </summary>
+        public static string AnySetting(string name)
+        {
+            if (ExplicitConfiguration != null) {
+                //var appSettings = ExplicitConfiguration.GetSection("appSettings");
+                if (ExplicitConfiguration.AppSettings == null) throw new ConfigurationErrorsException("Loaded config has null app settings");
+                if (ExplicitConfiguration.AppSettings.Settings == null) throw new ConfigurationErrorsException("Loaded config has invalid app settings");
+
+                if (ExplicitConfiguration.AppSettings.Settings.AllKeys.Length < 1) throw new ConfigurationErrorsException("Loaded config has empty app settings");
+                if (ExplicitConfiguration.AppSettings.Settings[name] == null)
+                    throw new ConfigurationErrorsException("Loaded config has no setting for '" + name + "'");
+                return ExplicitConfiguration?.AppSettings?.Settings[name]?.Value;
+            }
+
+            try { return RoleEnvironment.GetConfigurationSettingValue(name); }
+            catch { return ConfigurationManager.AppSettings[name]; }
+        }
 
         public WrapperRequestHandler(ISecurityCheck security)
         {
             _security = security;
             
+            
+            ExternalEndpoint = AnySetting("PrimaryCallbackAddress");
+
+            var settingValid = bool.TryParse(AnySetting("UpgradeHttp"), out var httpUpgradeSetting);
+            UpgradeHttp = HttpsAvailable && httpUpgradeSetting && settingValid;
+
             var timer = new Stopwatch();
             timer.Start();
             _versionTable = new VersionTable<SiteHost>();
 
             _baseFolder = AppDomain.CurrentDomain.BaseDirectory;
-            if (Directory.Exists(CoreListener.AnySetting("HostedSitesRootDirectory")))
+            if (Directory.Exists(AnySetting("HostedSitesRootDirectory")))
             {
                 // use directly specified folder
-                _watchFolder = CoreListener.AnySetting("HostedSitesRootDirectory");
+                _watchFolder = AnySetting("HostedSitesRootDirectory");
             }
             else
             {
@@ -113,7 +164,7 @@ namespace WrapperRoleListener.Core
 
         public void Handle(IContext context)
         {
-            if (CoreListener.UpgradeHttp && !context.Request.IsSecureConnection)
+            if (UpgradeHttp && !context.Request.IsSecureConnection)
             {
                 UpgradeResponse(context);
                 return;
@@ -192,7 +243,7 @@ namespace WrapperRoleListener.Core
 
         private void UpgradeResponse(IContext context)
         {
-            var baseUri = new Uri(CoreListener.ExternalEndpoint, UriKind.Absolute);
+            var baseUri = new Uri(ExternalEndpoint, UriKind.Absolute);
             if (baseUri.Scheme == "https") {
                 context.Response.Redirect($"{baseUri.GetLeftPart(UriPartial.Authority)}/{context.Request.Url.PathAndQuery}"); // hope that the default port will work
             } else {
@@ -243,7 +294,7 @@ namespace WrapperRoleListener.Core
                 var result = proxy.Request(sreq);
                 sw_core.Stop();
                 
-                HttpConverters.CopyToHttpListener(result, response, CoreListener.ExternalEndpoint);
+                HttpConverters.CopyToHttpListener(result, response, ExternalEndpoint);
 
                 Trace.TraceInformation("Call complete. Core timing: " + sw_core.Elapsed);
             }

@@ -27,23 +27,6 @@ namespace WrapperRoleListener.Core
         /// </summary>
         public event EventHandler PeriodicCheck;
 
-        /// <summary>
-        /// Bound external endpoint.
-        /// <para/>
-        /// Do not use request URIs externally, as they are internal bindings. Use one of these instead.
-        /// </summary>
-        public static string ExternalEndpoint { get; private set; }
-
-        /// <summary>
-        /// Returns true if at least one HTTPS endpoint is available
-        /// </summary>
-        public static bool HttpsAvailable { get; private set; }
-
-        /// <summary>
-        /// Returns true if HTTP calls should be redirected to HTTPS
-        /// </summary>
-        public static bool UpgradeHttp { get; private set; }
-
         private readonly WrapperRequestHandler _handler;
         private IDispatch<IContext> _dispatcher;
 
@@ -85,7 +68,7 @@ namespace WrapperRoleListener.Core
             var listener = new HttpListener();
 
             Trace.TraceInformation("Binding...");
-            HttpsAvailable = false;
+            WrapperRequestHandler.HttpsAvailable = false;
             foreach (var endpoint in endpoints)
             {
                 try
@@ -93,7 +76,7 @@ namespace WrapperRoleListener.Core
                     var name = endpoint.Name;
                     var baseUri = $"{endpoint.Protocol}://{endpoint.IPEndpoint}/";
 
-                    if (endpoint.Protocol == "https") HttpsAvailable = true;
+                    if (endpoint.Protocol == "https") WrapperRequestHandler.HttpsAvailable = true;
 
                     listener.Prefixes.Add(baseUri);
 
@@ -109,7 +92,6 @@ namespace WrapperRoleListener.Core
             Trace.TraceInformation("Starting...");
             try
             {
-                ExternalEndpoint = AnySetting("PrimaryCallbackAddress");
                 listener.IgnoreWriteExceptions = false;//true;
                 listener.Start();
             }
@@ -120,8 +102,6 @@ namespace WrapperRoleListener.Core
             }
             Trace.TraceInformation("Started");
 
-            var settingValid = bool.TryParse(AnySetting("UpgradeHttp"), out var httpUpgradeSetting);
-            UpgradeHttp = HttpsAvailable && httpUpgradeSetting && settingValid;
 
             while (!token.IsCancellationRequested)
             {
@@ -141,15 +121,6 @@ namespace WrapperRoleListener.Core
         protected virtual void OnPeriodicCheck()
         {
             PeriodicCheck?.Invoke(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Get a setting if defined in the role config or the app config
-        /// </summary>
-        public static string AnySetting(string name)
-        {
-            try { return RoleEnvironment.GetConfigurationSettingValue(name); }
-            catch { return ConfigurationManager.AppSettings[name]; }
         }
 
         private static void BaseExceptionHandler(object sender, UnhandledExceptionEventArgs args)

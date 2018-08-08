@@ -26,7 +26,9 @@ namespace WrapperRoleListener.Internal
 
             _remaining = bytesAvailable;
             _initialBytes = new byte[bytesAvailable];
-            Marshal.Copy(data, _initialBytes, 0, bytesAvailable);
+            if (data != IntPtr.Zero) {
+                Marshal.Copy(data, _initialBytes, 0, bytesAvailable);
+            }
         }
 
         public override void Flush() { }
