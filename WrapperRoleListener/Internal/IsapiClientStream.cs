@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace WrapperRoleListener.Internal
 {
@@ -42,7 +43,8 @@ namespace WrapperRoleListener.Internal
         {
             throw new NotImplementedException();
         }
-
+        
+        [SuppressUnmanagedCodeSecurity]
         public override int Read(byte[] buffer, int offset, int count)
         {
             if (_remaining > 0) {

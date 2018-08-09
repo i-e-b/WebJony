@@ -23,7 +23,8 @@ namespace WrapperRoleListener.Internal
             OutputStream = new MemoryStream();
             Headers = new NameValueCollectionHeaderWrapper(new NameValueCollection());
         }
-
+        
+        [SuppressUnmanagedCodeSecurity]
         public void Close()
         {
             int len;

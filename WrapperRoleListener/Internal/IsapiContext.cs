@@ -1,10 +1,8 @@
 using System;
-using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Web.SessionState;
-using Huygens;
 using Huygens.Compatibility;
 
 namespace WrapperRoleListener.Internal
@@ -46,7 +44,7 @@ namespace WrapperRoleListener.Internal
                 bytesDeclared, bytesAvailable, data, getServerVariable,
                 writeClient, readClient, serverSupport);
         }
-
+        
         public IPAddress EndpointAddress()
         {
             var raw = GetServerAnsiVariable("REMOTE_ADDR");
@@ -103,50 +101,6 @@ namespace WrapperRoleListener.Internal
             }
         }
 
-
-
-
-        [SuppressUnmanagedCodeSecurity]
-        private byte[] ReadAllContent(IntPtr connId, int bytesAvailable, int bytesDeclared, IntPtr data, Delegates.ReadClientDelegate readClient)
-        {
-            if (bytesDeclared < 1) return null;
-            
-            var dataStream = new IsapiClientStream(connId, bytesAvailable, bytesDeclared, data, readClient);
-            var msin = new MemoryStream();
-            dataStream.CopyTo(msin);
-            msin.Seek(0, SeekOrigin.Begin);
-            return msin.ToArray();
-        }
-
-        /// <summary>
-        /// Read headers from the incoming request
-        /// </summary>
-        [SuppressUnmanagedCodeSecurity]
-        private static string TryGetHeaders(IntPtr conn, Delegates.GetServerVariableDelegate callback)
-        {
-            var size = 4096;
-            var buffer = Marshal.AllocHGlobal(size);
-            try {
-                callback(conn, "UNICODE_ALL_RAW", buffer, ref size);
-                return Marshal.PtrToStringUni(buffer); // 'Uni' here matches 'UNICODE_' above.
-            } finally {
-                Marshal.FreeHGlobal(buffer);
-            }
-        }
-        
-        [SuppressUnmanagedCodeSecurity]
-        private string GetServerUnicodeVariable(string variableName)
-        {
-            var size = 4096;
-            var buffer = Marshal.AllocHGlobal(size);
-            try {
-                _getServerVariable(_conn, variableName, buffer, ref size);
-                return Marshal.PtrToStringUni(buffer);
-            } finally {
-                Marshal.FreeHGlobal(buffer);
-            }
-        }
-        
         [SuppressUnmanagedCodeSecurity]
         private string GetServerAnsiVariable(string variableName)
         {

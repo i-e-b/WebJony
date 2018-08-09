@@ -7,8 +7,9 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 using Huygens;
-using Tag;
+using Microsoft.Web.Administration;
 using WrapperCommon.Azure;
 using WrapperCommon.Security;
 using WrapperRoleListener.Core;
@@ -75,7 +76,7 @@ namespace WrapperRoleListener
         /// <param name="output">error message, if any</param>
         private static void WakeupCallback(string basePath, out string output)
         {
-            BaseDirectory = basePath;
+            BaseDirectory = Path.GetDirectoryName(basePath);
             output = null;
 
             // Do the wake up, similar to the CoreListener class
@@ -87,14 +88,19 @@ namespace WrapperRoleListener
                 // Set up the internal trace
                 Trace.UseGlobalLock = false;
                 Trace.AutoFlush = false;
+                Trace.Listeners.Clear();
                 Trace.Listeners.Add(LocalTrace.Instance);
 
+                
+                ThreadPool.SetMaxThreads(CoreListener.Parallelism, CoreListener.Parallelism);
+                ThreadPool.SetMinThreads(1, 1);
+
                 // Load the config file
-                var configurationMap = new ExeConfigurationFileMap { ExeConfigFilename = BaseDirectory + ".config" };
+                var configurationMap = new ExeConfigurationFileMap { ExeConfigFilename = basePath + ".config" }; // this will load the app.config file.
                 WrapperRequestHandler.ExplicitConfiguration = ConfigurationManager.OpenMappedExeConfiguration(configurationMap, ConfigurationUserLevel.None);
 
-                // TODO: find some way of checking if we have a HTTPS endpoint bound?
-                WrapperRequestHandler.HttpsAvailable = true;
+                // Check to see if HTTPS is bound in IIS
+                if (GetBindings(BaseDirectory).Contains("https")) WrapperRequestHandler.HttpsAvailable = true;
 
                 // Load the wrapper
                 _core = new WrapperRequestHandler(new AadSecurityCheck());
@@ -102,7 +108,7 @@ namespace WrapperRoleListener
             catch (Exception ex)
             {
                 RecPrintException(ex);
-                output = BaseDirectory + "\r\n" + ex;
+                output = basePath + "\r\n" + ex;
             }
         }
 
@@ -128,38 +134,6 @@ namespace WrapperRoleListener
             }
         }
 
-        private static void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
-        {
-            var ex = e.Exception;
-            if (ex != null) RecPrintException(ex);
-            else File.AppendAllText(@"C:\Temp\FirstChanceException.txt", "\r\n\r\nNo exception");
-        }
-
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            if (e.ExceptionObject is Exception ex) RecPrintException(ex);
-            else File.AppendAllText(@"C:\Temp\RootException.txt", "\r\n\r\nNo exception");
-        }
-
-        private static void RecPrintException(Exception ex)
-        {
-            if (ex == null) return;
-            File.AppendAllText(@"C:\Temp\RootException.txt", "\r\n\r\n" + ex);
-            RecPrintException(ex.InnerException);
-        }
-
-        private static int WriteFunctionPointer(Delegate del)
-        {
-            try
-            {
-                var bSetOk = Win32.SetSharedMem(Marshal.GetFunctionPointerForDelegate(del).ToInt64());
-                return bSetOk ? 1 : 0;
-            }
-            catch
-            {
-                return -2;
-            }
-        }
 
         public static void ShutdownCallback()
         {
@@ -194,67 +168,12 @@ namespace WrapperRoleListener
         {
             try
             {
-
                 _core?.Handle(
                     new IsapiContext(
                     conn, verb, query, pathInfo, pathTranslated, contentType,
                     bytesDeclared, bytesAvailable, data, getServerVariable,
                     writeClient, readClient, serverSupport)
                 );
-                /*
-
-                var headerString = TryGetHeaders(conn, getServerVariable);
-
-                var physicalPath = TryGetPhysPath(conn, getServerVariable);
-
-                var remoteAddr = TryGetRemoteAddr(conn, getServerVariable);
-                
-                var head = T.g("head")[T.g("title")[".Net Output"]];
-                
-                var body = T.g("body")[
-                    T.g("h1")["Hello"],
-                    T.g("p")[".Net here!"],
-                    T.g("p")["Core was ", (_core == null ? "null" : "ok")],
-                    T.g("p")["You called me with these properties:"],
-
-                    T.g("dl")[
-                        Def("Verb", verb),
-                        Def("Query string", query),
-                        Def("URL path", pathInfo),
-                        Def("Equivalent file path", pathTranslated),
-                        Def("App physical path", physicalPath),
-                        Def("Remote address", remoteAddr),
-                        Def("Requested content type", contentType)
-                    ],
-
-                    T.g("p")["Request headers: ",
-                        T.g("pre")[headerString]
-                    ],
-
-                    T.g("p")["Client supplied " + bytesAvailable + " bytes out of an expected " + bytesDeclared + " bytes"]
-                ];
-
-                var rq = new SerialisableRequest
-                {
-                    Headers = SplitToDict(headerString),
-                    Method = verb,
-                    RequestUri = pathInfo,
-                    Content = ReadAllContent(conn, bytesAvailable, bytesDeclared, data, readClient)
-                };
-                if (!string.IsNullOrWhiteSpace(query)) rq.RequestUri += "?" + query;
-
-                var page = T.g("html")[ head, body ];
-
-                var ms = new MemoryStream();
-                page.StreamTo(ms, Encoding.UTF8);
-                ms.WriteByte(0);
-                ms.Seek(0, SeekOrigin.Begin);
-                var msg = ms.ToArray();
-                int len = msg.Length;
-
-                TryWriteHeaders(conn, serverSupport);
-                writeClient(conn, msg, ref len, 0);
-                */
             }
             catch (Exception ex)
             {
@@ -266,103 +185,90 @@ namespace WrapperRoleListener
                 var msg = ms.ToArray();
                 int len = msg.Length;
 
-                TryWriteHeaders(conn, serverSupport);
+                WriteErrorHeaders(conn, serverSupport);
                 writeClient(conn, msg, ref len, 0);
             }
         }
+
         
-        [SuppressUnmanagedCodeSecurity]
-        private static byte[] ReadAllContent(IntPtr connId, int bytesAvailable, int bytesDeclared, IntPtr data, Delegates.ReadClientDelegate readClient)
+        private static void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
         {
-            if (bytesDeclared < 1) return null;
-            
-            var dataStream = new IsapiClientStream(connId, bytesAvailable, bytesDeclared, data, readClient);
-            var msin = new MemoryStream();
-            dataStream.CopyTo(msin);
-            msin.Seek(0, SeekOrigin.Begin);
-            return msin.ToArray();
+            var ex = e.Exception;
+            if (ex != null) RecPrintException(ex);
         }
 
-        private static Dictionary<string, string> SplitToDict(string headerString)
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            var output = new Dictionary<string,string>();
-            var lines = headerString.Split(new []{'\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var line in lines)
-            {
-                var bits = line.Split(new []{ ": "}, 2, StringSplitOptions.None);
-                if (bits.Length != 2) continue; // invalid header
+            if (e.ExceptionObject is Exception ex) RecPrintException(ex);
+        }
 
-                var key = bits[0].Trim();
-                var value = bits[1].Trim();
-                if (output.ContainsKey(key)) output[key] = output[key] + ", " + value;
-                else output.Add(key, value);
+        private static void RecPrintException(Exception ex)
+        {
+            if (ex == null) return;
+            Trace.TraceError(ex.ToString());
+            RecPrintException(ex.InnerException);
+        }
+
+        private static int WriteFunctionPointer(Delegate del)
+        {
+            try
+            {
+                var bSetOk = Win32.SetSharedMem(Marshal.GetFunctionPointerForDelegate(del).ToInt64());
+                return bSetOk ? 1 : 0;
+            }
+            catch
+            {
+                return -2;
+            }
+        }
+
+
+        /// <summary>
+        /// Read the http/https bindings for a local IIS site based on the virtual directory physical path
+        /// </summary>
+        private static List<string> GetBindings(string targetPath)
+        {
+            var output = new List<string>();
+
+            // Get the sites section from the AppPool.config 
+            var sitesSection = WebConfigurationManager.GetSection(null, null, "system.applicationHost/sites");
+
+            foreach (var site in sitesSection.GetCollection())
+            {
+                foreach (var application in site.GetCollection())
+                {
+                    foreach (var virtualDirectory in application.GetCollection())
+                    {
+                        var phys = (string)virtualDirectory["physicalPath"];
+                        if (!targetPath.Equals(phys, StringComparison.OrdinalIgnoreCase)) continue;
+
+                        // For each binding see if they are http based and return the port and protocol 
+                        foreach (var binding in site.GetCollection("bindings"))
+                        {
+                            string protocol = (string)binding["protocol"];
+
+                            if (!protocol.StartsWith("http", StringComparison.OrdinalIgnoreCase)) continue;
+
+
+                            // Return it if the path matches
+                            output.Add(protocol.ToLowerInvariant());
+                        }
+                    }
+                }
             }
             return output;
         }
 
-        private static TagContent Def(string name, string value)
-        {
-            return T.g()[
-                T.g("dt")[name],
-                T.g("dd")[value]
-            ];
-        }
-
-        /// <summary>
-        /// Read headers from the incoming request
-        /// </summary>
         [SuppressUnmanagedCodeSecurity]
-        private static string TryGetHeaders(IntPtr conn, Delegates.GetServerVariableDelegate callback)
-        {
-            var size = 4096;
-            var buffer = Marshal.AllocHGlobal(size);
-            try {
-                callback(conn, "UNICODE_ALL_RAW", buffer, ref size);
-                return Marshal.PtrToStringUni(buffer); // 'Uni' here matches 'UNICODE_' above.
-            } finally {
-                Marshal.FreeHGlobal(buffer);
-            }
-        }
-
-        [SuppressUnmanagedCodeSecurity]
-        private static string TryGetRemoteAddr(IntPtr conn, Delegates.GetServerVariableDelegate callback)
-        {
-            var size = 4096;
-            var buffer = Marshal.AllocHGlobal(size);
-            try {
-                callback(conn, "REMOTE_ADDR", buffer, ref size);
-                return Marshal.PtrToStringAnsi(buffer);
-            } finally {
-                Marshal.FreeHGlobal(buffer);
-            }
-        }
-        
-        [SuppressUnmanagedCodeSecurity]
-        private static string TryGetPhysPath(IntPtr conn, Delegates.GetServerVariableDelegate callback)
-        {
-            var size = 4096;
-            var buffer = Marshal.AllocHGlobal(size);
-            try {
-                callback(conn, "APPL_PHYSICAL_PATH", buffer, ref size);
-                return Marshal.PtrToStringAnsi(buffer); // Must be ANSI for this variable
-            } finally {
-                Marshal.FreeHGlobal(buffer);
-            }
-        }
-
-        /// <summary>
-        /// Test of 'ex' status writing
-        /// </summary>
-        [SuppressUnmanagedCodeSecurity]
-        private static void TryWriteHeaders(IntPtr conn, IntPtr ss)
+        private static void WriteErrorHeaders(IntPtr conn, IntPtr ss)
         {
             var headerCall = Marshal.GetDelegateForFunctionPointer<Delegates.ServerSupportFunctionDelegate_Headers>(ss);
 
             var data = new SendHeaderExInfo
             {
                 fKeepConn = false,
-                pszHeader = "X-Fish: I come from the marshall\r\nX-CB: "+typeof(DirectServer).Assembly.CodeBase+"\r\nContent-type: text/html\r\n\r\n",
-                pszStatus = "200 OK-dokey"
+                pszHeader = "X-CB: " + typeof(DirectServer).Assembly.CodeBase + "\r\nContent-type: text/html\r\n\r\n",
+                pszStatus = "500 Internal Server Error"
             };
 
             data.cchStatus = data.pszStatus.Length;

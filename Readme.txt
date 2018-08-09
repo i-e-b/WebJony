@@ -29,7 +29,7 @@ Features:
 TODO:
 -----
 
-* [ ] Simple hosting on IIS (Custom version of RawIsapi project)
+* [x] Simple hosting on IIS (Custom version of RawIsapi project)
 * [ ] Analytics integration point, including an Azure App Insights example
 * [ ] Automatic result compression
 * [ ] Centralised data store (for Azure hosting)
