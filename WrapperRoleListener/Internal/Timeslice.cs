@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace WrapperRoleListener.Internal
 {
     /// <summary>
-    /// Logarithmic record of good and bad calls per second
+    /// Logarithmic record of calls per second
     /// </summary>
     public class Timeslice
     {
@@ -29,19 +29,26 @@ namespace WrapperRoleListener.Internal
         /// Record an event now
         /// </summary>
         public void Record() {
-            var newRecord = DateTime.UtcNow.Ticks / ticksPerSample;
-            if (newRecord < lastRecord) return; // out of sequence
-            if (newRecord != lastRecord) {
-                var rolls = newRecord - lastRecord;
-                for (int i = 0; i < rolls; i++)
-                {
-                    RollSamples();
-                }
-            }
+            if ( ! BringUpToDate(out var newRecord)) return; // out of sequence
 
             sampleSum[0]++;
 
             lastRecord = newRecord;
+        }
+
+        private bool BringUpToDate(out long newRecord)
+        {
+            newRecord = DateTime.UtcNow.Ticks / ticksPerSample;
+            if (newRecord < lastRecord) return false;
+            if (newRecord == lastRecord) return true;
+            var rolls = newRecord - lastRecord;
+            for (int i = 0; i < rolls; i++)
+            {
+                RollSamples();
+            }
+            lastRecord = newRecord;
+
+            return true;
         }
 
         /// <summary>
@@ -49,6 +56,8 @@ namespace WrapperRoleListener.Internal
         /// </summary>
         public Dictionary<DateTime, double> View()
         {
+            BringUpToDate(out var _);
+
             var history = new Dictionary<DateTime, double>();
             try
             {

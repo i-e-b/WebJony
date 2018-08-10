@@ -25,23 +25,27 @@ Features:
 * [x] Rapid call test in JwtEndpointCaller (multithread calls)
 * [x] Reject known dll names from the file system scan (speed up start-up)
 * [x] Remove hard-coding, push account keys to a non-committed file
+* [x] Simple hosting on IIS (Custom version of RawIsapi project)
+* [x] Some graphs -- one that shows % proportion of versions over time, and the other where you pick a version and it shows % errors over time
 
 TODO:
 -----
 
-* [x] Simple hosting on IIS (Custom version of RawIsapi project)
+Next up:
 * [ ] Analytics integration point, including an Azure App Insights example
-* [ ] Automatic result compression
-* [ ] Centralised data store (for Azure hosting)
+
+Approximate priority order:
+* [ ] Centralised package data store (for Azure hosting)
+* [ ] Status API (add to management tool, and retire the test page?)
+* [ ] Ability to change logging level on the fly
+* [ ] Stats API (including graph output urls)
+* [ ] Removal of specific versions? (delete by major & minor)
 * [ ] New version feed-in mode? (newer minor versions get progressively more traffic?)
 * [ ] Automatic A/B testing (50% feed, watch error rates)
 * [ ] Version limit / retiring (limit on how many major versions can be active at once, with oldest being inaccessible)
-* [ ] Status API
-* [ ] Stats API (including graph output urls)
-* [ ] Removal of specific versions? (delete by major & minor)
-* [ ] Some graphs -- one that shows % proportion of versions over time, and the other where you pick a version and it shows % errors over time
 * [ ] Options for CORS header support
 * [ ] Gasconade version page
+* [ ] Automatic result compression
 * [ ] Sample Service Fabric deployment
 
 Potential features:

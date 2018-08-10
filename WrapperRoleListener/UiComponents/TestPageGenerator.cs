@@ -23,7 +23,10 @@ namespace WrapperRoleListener.UiComponents
         {
             var body = T.g("body");
             var page = T.g("html")[
-                T.g("head")[T.g("title")["Wrapper proxy test page"]],
+                T.g("head")[
+                    T.g("title")["Wrapper proxy test page"],
+                    T.g("style")[".good {stroke: #0A0; } .bad {stroke: #A00; } path { stroke-width: 2.5px; fill: none;  opacity: 0.5;}"]
+                ],
                 body
             ];
 
@@ -71,22 +74,61 @@ namespace WrapperRoleListener.UiComponents
             ]);
 
 
-            // *VERY* experimental:
-            body.Add(T.g("h1")["Experimental history"]);
+            // Some graphs
+            body.Add(T.g("h1")["Recent History"], T.g("p")["Logarithmic time scale. Left is last few seconds, right is last week."]);
 
             foreach (var version in list)
             {
-                body.Add(T.g("h3")[version.MajorVersion.ToString()]);
-                var pre = T.g("pre");
-                var hist = version.SuccessHistory.View();
-                foreach (var pair in hist)
-                {
-                    pre.Add("\r\n" + pair.Key + " -> " + pair.Value);
-                }
-                body.Add(pre);
+                body.Add(T.g("h3")["Version " + version.MajorVersion]);
+                body.Add(T.g("div")[RenderGraph(version.SuccessHistory, version.FailureHistory)]);
             }
 
             return page.ToString();
+        }
+
+        private static TagContent RenderGraph(Timeslice success, Timeslice failure){
+            var height = 240;
+            var width = 320;
+
+            var doc = SvgHeader(width, height, out var root);
+
+            var good = success.View().Values.ToArray();
+            var bad = failure.View().Values.ToArray();
+            var allMax = Math.Max(1, Math.Max(good.Max(), bad.Max()));
+            DrawLines(good, allMax, height, width, root, "good");
+            DrawLines(bad,  allMax, height, width, root, "bad");
+
+            return doc;
+        }
+
+        private static void DrawLines(double[] hist, double max, int height, int width, TagContent root, string @class)
+        {
+            var count = hist.Length;
+
+            var Hprop = Math.Max(1, max / height);
+            var Vprop = (double) width / count;
+            for (int i = 1; i < count; i++)
+            {
+                var Ly = hist[i - 1] / Hprop;
+                var Lx = (i - 1) * Vprop;
+                var Ry = hist[i] / Hprop;
+                var Rx = i * Vprop;
+
+                root.Add(SimpleLine(Lx, height - Ly, Rx, height - Ry, @class));
+            }
+        }
+
+        private static TagContent SimpleLine(double x1, double y1, double x2, double y2, string @class) {
+            return T.g("g", "class",@class)[
+                T.g("path", "d",
+                    "M"+x1+","+y1+
+                    "L"+x2+","+y2)
+            ];
+        }
+
+        private static TagContent SvgHeader(int width, int height, out TagContent rootElement){
+            rootElement = T.g("g", "transform","translate(0,0)");
+            return T.g("svg", "id", "svgroot", "width", width + "px", "height", height + "px")[rootElement];
         }
     }
 }
