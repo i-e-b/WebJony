@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace WrapperRoleListener.Internal
 {
+    /// <summary>
+    /// Delegates and interop types used by the Isapi host (`IisEntryPoint`)
+    /// </summary>
     public class Delegates
     {
         // Any delegates should match exactly on the C++ side

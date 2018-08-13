@@ -9,14 +9,14 @@ namespace WrapperRoleListener
 {
     /// <summary>
     /// Binds a HTTP listener to the ports configured in the service definition,
-    /// passing requests to a WrapperRequestHandler instance
+    /// passing requests to a MainRequestHandler instance
     /// </summary>
     public class AzureEntryPoint : RoleEntryPoint
     {
 
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
-        private CoreListener core;
+        private ListenerLoop core;
 
         public override void Run()
         {
@@ -44,7 +44,7 @@ namespace WrapperRoleListener
             }
             try
             {
-                core = new CoreListener();
+                core = new ListenerLoop();
                 core.Listen(cancellationTokenSource.Token, endpoints);
             }
             finally

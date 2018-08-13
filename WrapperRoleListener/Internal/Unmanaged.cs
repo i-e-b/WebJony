@@ -6,7 +6,7 @@ namespace WrapperRoleListener.Internal
     /// <summary>
     /// Interop calls
     /// </summary>
-    public class Win32
+    public class Unmanaged
     {
         /// <summary>Send data back to the host</summary>
         /// <remarks>

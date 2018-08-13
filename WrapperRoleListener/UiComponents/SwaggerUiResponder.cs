@@ -63,9 +63,9 @@ namespace WrapperRoleListener.UiComponents
             var major = requestedVersion.Split('-').FirstOrDefault() ?? "0";
 
             // get a host setting to inject in the swagger
-            var redirUri = new Uri(WrapperRequestHandler.ExternalEndpoint, UriKind.Absolute);
-            var selfAuthority = new Uri(WrapperRequestHandler.ExternalEndpoint, UriKind.Absolute).Authority;
-            if (WrapperRequestHandler.UpgradeHttp && redirUri.Scheme == "http")
+            var redirUri = new Uri(MainRequestHandler.ExternalEndpoint, UriKind.Absolute);
+            var selfAuthority = new Uri(MainRequestHandler.ExternalEndpoint, UriKind.Absolute).Authority;
+            if (MainRequestHandler.UpgradeHttp && redirUri.Scheme == "http")
             {
                 selfAuthority = redirUri.Host; // configured address would get bounced, to try guess a better uri
             }
@@ -87,8 +87,8 @@ namespace WrapperRoleListener.UiComponents
                     spec.host = selfAuthority;
                     spec.info.version = requestedVersion;
 
-                    if      (WrapperRequestHandler.UpgradeHttp)    { spec.schemes = new[] {         "https" }; }
-                    else if (WrapperRequestHandler.HttpsAvailable) { spec.schemes = new[] { "http", "https" }; }
+                    if      (MainRequestHandler.UpgradeHttp)    { spec.schemes = new[] {         "https" }; }
+                    else if (MainRequestHandler.HttpsAvailable) { spec.schemes = new[] { "http", "https" }; }
                     else                                           { spec.schemes = new[] { "http"          }; }
 
                     spec.securityDefinitions = new Dictionary<string, object>{

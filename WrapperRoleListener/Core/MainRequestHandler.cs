@@ -17,9 +17,10 @@ using WrapperRoleListener.UiComponents;
 namespace WrapperRoleListener.Core
 {
     /// <summary>
-    /// Handles all HTTP calls to the service, routing them to proxies or directly responding
+    /// Handles all HTTP calls to the service, routing them to proxies or directly responding.
+    /// All the entry points use this
     /// </summary>
-    public class WrapperRequestHandler
+    public class MainRequestHandler
     {
         private readonly ISecurityCheck _security;
         private readonly string _watchFolder;
@@ -76,7 +77,7 @@ namespace WrapperRoleListener.Core
             catch { return ConfigurationManager.AppSettings[name]; }
         }
 
-        public WrapperRequestHandler(ISecurityCheck security)
+        public MainRequestHandler(ISecurityCheck security)
         {
             _security = security;
             

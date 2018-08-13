@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Xml.Linq;
 using Huygens;
@@ -93,8 +92,6 @@ namespace WrapperRoleListener.Core
             var binPath = Path.GetDirectoryName(rootAssemblyPath);
             var outerDirectory = Path.GetDirectoryName(binPath);
             if (outerDirectory == null) throw new Exception("Could not guess outer hosting directory");
-
-            var exePath = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath);
 
             // Try to edit child's Web.Config file for Azure hosting requirements. We also turn on debug information, so we can capture it for logging.
             var webConfigPath = Path.Combine(outerDirectory, "web.config");

@@ -28,7 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{4CF02D4D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VersionUploader", "VersionUploader\VersionUploader.csproj", "{7631FD3B-B5F7-4E74-B39A-257FCC8CF243}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WorkerRoleTests", "WorkerRoleTests", "{3906EC84-EE1D-425E-9B33-7EF3BEA3299D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hosting", "Hosting", "{3906EC84-EE1D-425E-9B33-7EF3BEA3299D}"
 EndProject
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "WrapperWorkerRole", "WrapperWorkerRole\WrapperWorkerRole.ccproj", "{ED7014E8-C48C-4BF7-B178-7C5930F5E72B}"
 EndProject
@@ -37,9 +37,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RawIsapi", "RawIsapi\RawIsapi.vcxproj", "{196DBACD-5D6B-4B72-BD49-F8093DD6BBCD}"
 EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -151,7 +148,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E641BE90-C4B4-40FA-89AE-66AC7E111434} = {FDCAF9C4-F89B-4FBB-A596-CDC0E30B8391}
-		{DFBF42B0-A304-4AEC-B468-0A8458C1139C} = {FDCAF9C4-F89B-4FBB-A596-CDC0E30B8391}
+		{DFBF42B0-A304-4AEC-B468-0A8458C1139C} = {3906EC84-EE1D-425E-9B33-7EF3BEA3299D}
 		{C5D5B457-FAB4-49A4-9D60-98B358FD75D6} = {4CF02D4D-D54B-4A93-9D1F-E3BD14F71BF6}
 		{1272ABD2-94B0-44AB-B363-AEAA39E9482F} = {FDCAF9C4-F89B-4FBB-A596-CDC0E30B8391}
 		{7631FD3B-B5F7-4E74-B39A-257FCC8CF243} = {4CF02D4D-D54B-4A93-9D1F-E3BD14F71BF6}
@@ -161,5 +158,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0DD29162-574E-4C86-8DA3-1F1E3EEACA90}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

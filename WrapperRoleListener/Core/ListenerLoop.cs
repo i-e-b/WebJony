@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using DispatchSharp;
 using Huygens.Compatibility;
-using Microsoft.WindowsAzure.ServiceRuntime;
 using WrapperCommon.Azure;
 using WrapperCommon.Security;
 using WrapperRoleListener.Internal;
 
 namespace WrapperRoleListener.Core
 {
-    public class CoreListener
+    /// <summary>
+    /// Handles waiting for HTTP messages and dispatching them when running as an Azure Worker, or as a plain exe.
+    /// </summary>
+    public class ListenerLoop
     {
         /// <summary>
         /// Number of requests/threads to handle at once
@@ -27,10 +28,10 @@ namespace WrapperRoleListener.Core
         /// </summary>
         public event EventHandler PeriodicCheck;
 
-        private readonly WrapperRequestHandler _handler;
+        private readonly MainRequestHandler _handler;
         private IDispatch<IContext> _dispatcher;
 
-        public CoreListener()
+        public ListenerLoop()
         {
             // Start re-populating signing keys. If the code-cached keys are out of date, it may take a few seconds to freshen.
             SigningKeys.UpdateKeyCache();
@@ -52,7 +53,7 @@ namespace WrapperRoleListener.Core
             ServicePointManager.EnableDnsRoundRobin = true; // can load balance with DNS
             ServicePointManager.SetTcpKeepAlive(false, 0, 0);
 
-            _handler = new WrapperRequestHandler(new AadSecurityCheck());
+            _handler = new MainRequestHandler(new AadSecurityCheck());
 
         }
 
@@ -68,7 +69,7 @@ namespace WrapperRoleListener.Core
             var listener = new HttpListener();
 
             Trace.TraceInformation("Binding...");
-            WrapperRequestHandler.HttpsAvailable = false;
+            MainRequestHandler.HttpsAvailable = false;
             foreach (var endpoint in endpoints)
             {
                 try
@@ -76,7 +77,7 @@ namespace WrapperRoleListener.Core
                     var name = endpoint.Name;
                     var baseUri = $"{endpoint.Protocol}://{endpoint.IPEndpoint}/";
 
-                    if (endpoint.Protocol == "https") WrapperRequestHandler.HttpsAvailable = true;
+                    if (endpoint.Protocol == "https") MainRequestHandler.HttpsAvailable = true;
 
                     listener.Prefixes.Add(baseUri);
 

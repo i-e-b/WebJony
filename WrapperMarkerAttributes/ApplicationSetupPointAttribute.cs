@@ -10,6 +10,9 @@ namespace WrapperMarkerAttributes
     [AttributeUsage(AttributeTargets.Class)]
     public class ApplicationSetupPointAttribute : Attribute
     {
+        /// <summary>
+        /// The major revision number of this site
+        /// </summary>
         public int ApiMajorVersion { get; }
 
         protected ApplicationSetupPointAttribute() { }

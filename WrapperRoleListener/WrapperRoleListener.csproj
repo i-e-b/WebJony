@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>WrapperRoleListener.Program</StartupObject>
+    <StartupObject>WrapperRoleListener.ExeEntryPoint</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Containers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -71,7 +71,7 @@
   <ItemGroup>
     <Compile Include="IisEntryPoint.cs" />
     <Compile Include="Internal\ConsoleTrace.cs" />
-    <Compile Include="Core\CoreListener.cs" />
+    <Compile Include="Core\ListenerLoop.cs" />
     <Compile Include="Core\Endpoint.cs" />
     <Compile Include="Internal\CircularString.cs" />
     <Compile Include="Internal\Delegates.cs" />
@@ -81,16 +81,16 @@
     <Compile Include="Internal\LocalTrace.cs" />
     <Compile Include="Internal\SendHeaderExInfo.cs" />
     <Compile Include="Internal\Timeslice.cs" />
-    <Compile Include="Internal\Win32.cs" />
+    <Compile Include="Internal\Unmanaged.cs" />
     <Compile Include="Internal\IsapiContext.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="ExeEntryPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\SiteHost.cs" />
     <Compile Include="UiComponents\SwaggerUiResponder.cs" />
     <Compile Include="Internal\WarmupCallException.cs" />
     <Compile Include="UiComponents\TestPageGenerator.cs" />
     <Compile Include="AzureEntryPoint.cs" />
-    <Compile Include="Core\WrapperRequestHandler.cs" />
+    <Compile Include="Core\MainRequestHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\..\Temp\WrappedSites\deploy-certs\WrapperSigning.pfx.cer">

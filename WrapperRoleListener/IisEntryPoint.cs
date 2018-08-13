@@ -19,7 +19,7 @@ namespace WrapperRoleListener
 {
     /// <summary>
     /// Binds an ISAPI handler for the C++ IIS shim,
-    /// passing requests to a WrapperRequestHandler instance
+    /// passing requests to a MainRequestHandler instance
     ///
     /// The C++ side assumes:
     ///     - The C# dll/exe will be in the same directory
@@ -46,7 +46,7 @@ namespace WrapperRoleListener
         /// Allocated directory for config and setup
         /// </summary>
         private static string BaseDirectory;
-        private static WrapperRequestHandler _core;
+        private static MainRequestHandler _core;
 
         /// <summary>
         /// Static constructor. Build the function pointers
@@ -79,7 +79,7 @@ namespace WrapperRoleListener
             BaseDirectory = Path.GetDirectoryName(basePath);
             output = null;
 
-            // Do the wake up, similar to the CoreListener class
+            // Do the wake up, similar to the ListenerLoop class
             try
             {
                 // Start re-populating signing keys. If the code-cached keys are out of date, it may take a few seconds to freshen.
@@ -92,18 +92,18 @@ namespace WrapperRoleListener
                 Trace.Listeners.Add(LocalTrace.Instance);
 
                 
-                ThreadPool.SetMaxThreads(CoreListener.Parallelism, CoreListener.Parallelism);
+                ThreadPool.SetMaxThreads(ListenerLoop.Parallelism, ListenerLoop.Parallelism);
                 ThreadPool.SetMinThreads(1, 1);
 
                 // Load the config file
                 var configurationMap = new ExeConfigurationFileMap { ExeConfigFilename = basePath + ".config" }; // this will load the app.config file.
-                WrapperRequestHandler.ExplicitConfiguration = ConfigurationManager.OpenMappedExeConfiguration(configurationMap, ConfigurationUserLevel.None);
+                MainRequestHandler.ExplicitConfiguration = ConfigurationManager.OpenMappedExeConfiguration(configurationMap, ConfigurationUserLevel.None);
 
                 // Check to see if HTTPS is bound in IIS
-                if (GetBindings(BaseDirectory).Contains("https")) WrapperRequestHandler.HttpsAvailable = true;
+                if (GetBindings(BaseDirectory).Contains("https")) MainRequestHandler.HttpsAvailable = true;
 
                 // Load the wrapper
-                _core = new WrapperRequestHandler(new AadSecurityCheck());
+                _core = new MainRequestHandler(new AadSecurityCheck());
             }
             catch (Exception ex)
             {
@@ -213,7 +213,7 @@ namespace WrapperRoleListener
         {
             try
             {
-                var bSetOk = Win32.SetSharedMem(Marshal.GetFunctionPointerForDelegate(del).ToInt64());
+                var bSetOk = Unmanaged.SetSharedMem(Marshal.GetFunctionPointerForDelegate(del).ToInt64());
                 return bSetOk ? 1 : 0;
             }
             catch
@@ -274,7 +274,7 @@ namespace WrapperRoleListener
             data.cchStatus = data.pszStatus.Length;
             data.cchHeader = data.pszHeader.Length;
 
-            headerCall(conn, Win32.HSE_REQ_SEND_RESPONSE_HEADER_EX, data, IntPtr.Zero, IntPtr.Zero);
+            headerCall(conn, Unmanaged.HSE_REQ_SEND_RESPONSE_HEADER_EX, data, IntPtr.Zero, IntPtr.Zero);
         }
         
         /// <summary>

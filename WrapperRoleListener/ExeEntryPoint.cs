@@ -7,11 +7,11 @@ using WrapperRoleListener.Internal;
 
 namespace WrapperRoleListener
 {
-    public class Program
+    public class ExeEntryPoint
     {
         private static readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private static readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
-        private static CoreListener core;
+        private static ListenerLoop core;
         private static int ParentProcessId = -1;
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace WrapperRoleListener
 
             try
             {
-                core = new CoreListener();
+                core = new ListenerLoop();
                 if (ParentProcessId > 0) { core.PeriodicCheck += Core_PeriodicCheck; }
                 core.Listen(cancellationTokenSource.Token, endpoints);
             }

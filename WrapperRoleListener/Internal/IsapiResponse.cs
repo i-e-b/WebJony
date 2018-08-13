@@ -4,7 +4,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
-using Huygens;
 using Huygens.Compatibility;
 
 namespace WrapperRoleListener.Internal
@@ -15,7 +14,9 @@ namespace WrapperRoleListener.Internal
         private readonly Delegates.WriteClientDelegate _writeClient;
         private readonly IntPtr _serverSupport;
 
+        // ReSharper disable UnusedParameter.Local
         public IsapiResponse(IntPtr conn, string verb, string query, string pathInfo, string pathTranslated, string contentType, int bytesDeclared, int bytesAvailable, IntPtr data, Delegates.GetServerVariableDelegate getServerVariable, Delegates.WriteClientDelegate writeClient, Delegates.ReadClientDelegate readClient, IntPtr serverSupport)
+        // ReSharper restore UnusedParameter.Local
         {
             _conn = conn;
             _writeClient = writeClient;
@@ -129,7 +130,7 @@ namespace WrapperRoleListener.Internal
             data.cchStatus = data.pszStatus.Length;
             data.cchHeader = data.pszHeader.Length;
 
-            headerCall(_conn, Win32.HSE_REQ_SEND_RESPONSE_HEADER_EX, data, IntPtr.Zero, IntPtr.Zero);
+            headerCall(_conn, Unmanaged.HSE_REQ_SEND_RESPONSE_HEADER_EX, data, IntPtr.Zero, IntPtr.Zero);
         }
 
 

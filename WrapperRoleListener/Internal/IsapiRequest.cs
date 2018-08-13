@@ -13,13 +13,13 @@ namespace WrapperRoleListener.Internal
     public class IsapiRequest : IRequest
     {
         private readonly IntPtr _conn;
-        private readonly string _pathInfo;
         private readonly Delegates.GetServerVariableDelegate _getServerVariable;
 
+        // ReSharper disable UnusedParameter.Local
         public IsapiRequest(IntPtr conn, string verb, string query, string pathInfo, string pathTranslated, string contentType, int bytesDeclared, int bytesAvailable, IntPtr data, Delegates.GetServerVariableDelegate getServerVariable, Delegates.WriteClientDelegate writeClient, Delegates.ReadClientDelegate readClient, IntPtr serverSupport)
+        // ReSharper restore UnusedParameter.Local
         {
             _conn = conn;
-            _pathInfo = pathInfo;
             _getServerVariable = getServerVariable;
 
             HttpMethod = verb;
