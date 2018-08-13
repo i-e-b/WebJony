@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace WrapperCommon.AssemblyLoading
+namespace WrapperRoleListener.Internal.AssemblyLoading
 {
     /// <summary>
     /// Watch for changes to a plugin directory for the setup marker attribute. Supplies paths to DLLs.

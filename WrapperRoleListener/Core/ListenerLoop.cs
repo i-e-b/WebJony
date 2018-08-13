@@ -5,9 +5,9 @@ using System.Net;
 using System.Threading;
 using DispatchSharp;
 using Huygens.Compatibility;
-using WrapperCommon.Azure;
-using WrapperCommon.Security;
 using WrapperRoleListener.Internal;
+using WrapperRoleListener.Internal.Azure;
+using WrapperRoleListener.Internal.Security;
 
 namespace WrapperRoleListener.Core
 {

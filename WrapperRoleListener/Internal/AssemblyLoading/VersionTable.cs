@@ -9,7 +9,7 @@ using Containers;
 using Mono.Cecil;
 using WrapperMarkerAttributes;
 
-namespace WrapperCommon.AssemblyLoading
+namespace WrapperRoleListener.Internal.AssemblyLoading
 {
     /// <summary>
     /// Keeps a lookup table of versions to root assembly paths.

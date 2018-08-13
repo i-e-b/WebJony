@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Huygens;
 using Tag;
-using WrapperCommon.AssemblyLoading;
 using WrapperRoleListener.Core;
 using WrapperRoleListener.Internal;
+using WrapperRoleListener.Internal.AssemblyLoading;
 
 namespace WrapperRoleListener.UiComponents
 {

@@ -10,10 +10,10 @@ using System.Text;
 using System.Threading;
 using Huygens;
 using Microsoft.Web.Administration;
-using WrapperCommon.Azure;
-using WrapperCommon.Security;
 using WrapperRoleListener.Core;
 using WrapperRoleListener.Internal;
+using WrapperRoleListener.Internal.Azure;
+using WrapperRoleListener.Internal.Security;
 
 namespace WrapperRoleListener
 {

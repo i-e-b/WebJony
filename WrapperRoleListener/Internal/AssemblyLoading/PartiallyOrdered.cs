@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WrapperCommon.AssemblyLoading
+namespace WrapperRoleListener.Internal.AssemblyLoading
 {
     /// <summary>
     /// A rough patch for C#'s terrible equality cruft

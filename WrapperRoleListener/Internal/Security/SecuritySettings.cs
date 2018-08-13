@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using SkinnyJson;
 
-namespace WrapperCommon.Security
+namespace WrapperRoleListener.Internal.Security
 {
     /// <summary>
     /// Security setting and keys loaded from JSON file.

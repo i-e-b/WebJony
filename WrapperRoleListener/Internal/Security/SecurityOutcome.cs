@@ -1,4 +1,4 @@
-﻿namespace WrapperCommon.Security
+﻿namespace WrapperRoleListener.Internal.Security
 {
     public enum SecurityOutcome
     {

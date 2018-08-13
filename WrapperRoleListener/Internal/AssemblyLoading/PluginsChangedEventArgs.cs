@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WrapperCommon.AssemblyLoading
+namespace WrapperRoleListener.Internal.AssemblyLoading
 {
     /// <summary>
     /// Event arguments relating to a change in available MEF Export types.

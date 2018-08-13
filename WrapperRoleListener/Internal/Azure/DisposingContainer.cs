@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace WrapperCommon.Azure
+namespace WrapperRoleListener.Internal.Azure
 {
     public class DisposingContainer<T> : IDisposable, ICollection<T>
         where T : IDisposable{

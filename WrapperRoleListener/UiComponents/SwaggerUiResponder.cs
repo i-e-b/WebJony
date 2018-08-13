@@ -6,8 +6,8 @@ using System.Text;
 using Huygens;
 using Huygens.Compatibility;
 using SkinnyJson;
-using WrapperCommon.AssemblyLoading;
 using WrapperRoleListener.Core;
+using WrapperRoleListener.Internal.AssemblyLoading;
 
 namespace WrapperRoleListener.UiComponents
 {

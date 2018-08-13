@@ -1,4 +1,4 @@
-﻿namespace WrapperCommon.Security
+﻿namespace WrapperRoleListener.Internal.Security
 {
     /// <summary>
     /// Config keys from json settings file

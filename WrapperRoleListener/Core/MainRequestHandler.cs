@@ -8,10 +8,9 @@ using System.Text;
 using System.Threading;
 using Huygens.Compatibility;
 using Microsoft.WindowsAzure.ServiceRuntime;
-using WrapperCommon;
-using WrapperCommon.AssemblyLoading;
-using WrapperCommon.Security;
 using WrapperRoleListener.Internal;
+using WrapperRoleListener.Internal.AssemblyLoading;
+using WrapperRoleListener.Internal.Security;
 using WrapperRoleListener.UiComponents;
 
 namespace WrapperRoleListener.Core

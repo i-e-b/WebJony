@@ -5,8 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using ShiftIt.Http;
-using WrapperCommon.AssemblyLoading;
-using HttpClient = ShiftIt.Http.HttpClient;
+using WrapperRoleListener.Internal.AssemblyLoading;
 
 namespace VersionUploader
 {

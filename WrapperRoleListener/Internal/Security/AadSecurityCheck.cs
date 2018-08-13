@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Configuration;
 using System.IdentityModel.Tokens;
 using Huygens.Compatibility;
-using WrapperCommon.Azure;
+using WrapperRoleListener.Internal.Azure;
 
-namespace WrapperCommon.Security
+namespace WrapperRoleListener.Internal.Security
 {
     /// <summary>
     /// Verify security with Azure Active Directory

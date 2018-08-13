@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace WrapperCommon.AssemblyLoading
+namespace WrapperRoleListener.Internal.AssemblyLoading
 {
     [Serializable]
     public class BuildVersion: PartiallyOrdered

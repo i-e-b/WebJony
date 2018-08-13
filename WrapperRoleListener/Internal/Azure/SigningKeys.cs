@@ -6,9 +6,9 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using SkinnyJson;
-using WrapperCommon.Security;
+using WrapperRoleListener.Internal.Security;
 
-namespace WrapperCommon.Azure
+namespace WrapperRoleListener.Internal.Azure
 {
     public static class SigningKeys
     {

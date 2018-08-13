@@ -1,6 +1,6 @@
 ﻿using Huygens.Compatibility;
 
-namespace WrapperCommon.Security
+namespace WrapperRoleListener.Internal.Security
 {
     public interface ISecurityCheck
     {

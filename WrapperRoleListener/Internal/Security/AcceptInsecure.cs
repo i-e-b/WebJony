@@ -1,6 +1,6 @@
 ﻿using Huygens.Compatibility;
 
-namespace WrapperCommon.Security
+namespace WrapperRoleListener.Internal.Security
 {
     /// <summary>
     /// A security check for running is fully hosted environments.

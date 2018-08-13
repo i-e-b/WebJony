@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace WrapperCommon
+namespace WrapperRoleListener.Internal
 {
     /// <summary>
     /// Helper class to properly wait for async tasks
@@ -16,7 +16,7 @@ namespace WrapperCommon
         /// <summary>
         /// Run an async function synchronously and return the result
         /// </summary>
-        public static TResult Run<TResult>([JetBrains.Annotations.InstantHandle]Func<Task<TResult>> func)
+        public static TResult Run<TResult>([InstantHandle]Func<Task<TResult>> func)
         {
             EnsureFactory();
             try
@@ -33,7 +33,7 @@ namespace WrapperCommon
         /// <summary>
         /// Run an async function synchronously
         /// </summary>
-        public static void Run([JetBrains.Annotations.InstantHandle]Func<Task> func) {
+        public static void Run([InstantHandle]Func<Task> func) {
             EnsureFactory();
             _taskFactory.StartNew(func).Unwrap().ConfigureAwait(continueOnCapturedContext: false).GetAwaiter().GetResult();
         }
@@ -51,8 +51,7 @@ namespace WrapperCommon
         }
 
     }
-}
-namespace JetBrains.Annotations{
+
     [AttributeUsage(AttributeTargets.All)]
     public class InstantHandleAttribute : Attribute { }
 }

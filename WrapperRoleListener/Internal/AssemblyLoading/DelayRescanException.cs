@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WrapperCommon.AssemblyLoading
+namespace WrapperRoleListener.Internal.AssemblyLoading
 {
     /// <summary>
     /// An exception indicating that file scans should be retried later
